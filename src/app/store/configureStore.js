@@ -1,6 +1,7 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { routerReducer as routing, routerMiddleware } from 'react-router-redux';
 import thunkMiddleware from 'redux-thunk';
+import { reducer as reduxAsyncConnect } from 'redux-async-connect';
 import createApiMiddleware from '../middleware/api';
 
 // import createApiMiddleware from 'middleware/api';
@@ -23,7 +24,7 @@ export default function configureStore(history, initialState, req) {
   let createStoreWithMiddleware = applyMiddleware(...middleware)(createStore);
 
   /** Creating root reduser. */
-  const rootReducer = combineReducers(Object.assign(reducers, { routing }));
+  const rootReducer = combineReducers(Object.assign(reducers, { routing, reduxAsyncConnect }));
 
   return createStoreWithMiddleware(rootReducer, initialState);
 }

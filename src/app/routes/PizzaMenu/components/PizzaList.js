@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
+import { asyncConnect } from 'redux-async-connect';
 
 import { loadPizzas } from 'actions/pizzas';
 
 class PizzaList extends Component {
-  componentWillMount() {
-    this.props.loadPizzas();
-  }
-
   render() {
     const { pizzas, children } = this.props;
 
@@ -35,13 +32,24 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps, {
+export default asyncConnect([{
+  promise: (asyncState) => {
+    const { store } = asyncState;
+    const state = store.getState();
+    const { pizzas } = state;
+
+    if (!pizzas.data) {
+      return store.dispatch(loadPizzas());
+    }
+
+    return Promise.resolve();
+  },
+}])(connect(mapStateToProps, {
   loadPizzas,
-})(PizzaList);
+})(PizzaList));
 
 PizzaList.propTypes = {
   applicationName: React.PropTypes.string,
   children: React.PropTypes.object,
   pizzas: React.PropTypes.object.isRequired,
-  loadPizzas: React.PropTypes.func.isRequired,
 };

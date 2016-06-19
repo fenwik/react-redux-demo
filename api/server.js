@@ -15,6 +15,7 @@ server.listen(serverPort, 'localhost');
 console.log(`Server is up and running on localhost:${serverPort}`);
 
 app.get('/pizzas', function (req, res) {
+  console.log('GET /pizzas');
   res.status(200);
   res.send([
     { id: 1, name: 'Pizza 1', price: '$2.99', toppings: ['pepperoni', 'tomatos'] },

@@ -42,17 +42,30 @@ function callApi(endpoint, method, data, queryParams, options) {
 }
 
 function makeOptions(req, store, apiRoot) {
-  let hostname = window.location.hostname;
-  let port = (window.location.port) ? `:${window.location.port}` : '';
-  let apiPath = apiRoot;
+  let hostname, port, apiPath, csrfToken;
 
-  let csrfToken;
-  if (cookie.parse(document.cookie).csrftoken) {
-    csrfToken = cookie.parse(document.cookie).csrftoken;
+  if (req) {
+    hostname = 'localhost';
+    port = ':8010';
+    apiPath = '/';
+    csrfToken = req.cookies.csrftoken;
+
+  } else if (window && window.location) {
+    hostname = window.location.hostname;
+    port = (window.location.port) ? `:${window.location.port}` : '';
+    apiPath = apiRoot;
+
+    if (cookie.parse(document.cookie).csrftoken) {
+      csrfToken = cookie.parse(document.cookie).csrftoken;
+    }
+
+  }else {
+    return null;
+
   }
 
   return {
-    apiRoot: `//${hostname}${port}${apiPath}`,
+    apiRoot: `http://${hostname}${port}${apiPath}`,
     csrfToken,
   };
 }
